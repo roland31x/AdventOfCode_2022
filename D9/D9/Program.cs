@@ -25,23 +25,13 @@ namespace D9
                     thisHead.Move(op, times);
                 }
             }
-            for(int i = 0; i < thisHead.tails.Count - 1; i++)
-            {
-                for(int j = i + 1; j < thisHead.tails.Count; j++)
-                {
-                    while (thisHead.tails[i].Check(thisHead.tails[j]))
-                    {
-                        thisHead.tails.Remove(thisHead.tails[i]);
-                        j = i + 1;
-                    }
-                }
-            }
             sum = thisHead.tails.Count;
             Console.WriteLine(sum);
         }
     }
     class Head
     {
+        public List<Tail> myTails { get; set; }  // NOT NEEDED FOR PART 1
         public int posX { get; set; }
         public int posY { get; set; }
         public int LastPozX { get; set; }
@@ -52,8 +42,9 @@ namespace D9
         public List<Tail> tails;   // STORES PAST TAIL POSITIONS
         public Head()
         {
+            myTails = new List<Tail>() { new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this)}; // NOT NEEDED FOR PART 1
             tails = new List<Tail>();
-            myTail = new Tail(this);
+            myTail = myTails[0];
             posX = 0;
             posY = 0;
         }
@@ -77,9 +68,21 @@ namespace D9
                         MoveDown();
                         break;
                 }
-                TailCheck();
-                tails.Add(new Tail (myTail.TailposX,myTail.TailposY));
+                TailsCheck();  // ONLY USE TAILCHECK() FOR PART 1 
                 times--;
+                bool OK = true;
+                foreach (Tail t in tails)
+                {
+                    if (t.Check(myTails[8]))
+                    {
+                        OK = false;
+                        break;
+                    }
+                }
+                if (OK)
+                {
+                    tails.Add(new Tail(myTails[8].TailposX, myTails[8].TailposY));   // ADD myTail instead of myTails[8] for PART 1
+                }                             
             }
         }
         public void MoveRight()
@@ -110,6 +113,20 @@ namespace D9
                 myTail.MoveTo(this);
             }
         }
+        public void TailsCheck()
+        {
+            for(int i = 0; i < myTails.Count - 1; i++) 
+            {
+                if(i == 0)
+                {
+                    TailCheck();
+                }
+                if (Math.Abs(myTails[i + 1].TailposX - myTails[i].TailposX) > 1 || Math.Abs(myTails[i+1].TailposY - myTails[i].TailposY) > 1)
+                {
+                    myTails[i + 1].MoveTo(myTails[i]);
+                }
+            }
+        }
     }
     class Tail
     {
@@ -129,6 +146,87 @@ namespace D9
         {
             TailposX = head.LastPozX;
             TailposY = head.LastPozY;
+        }
+        public void MoveTo(Tail tail)
+        {
+            int bY = this.TailposY;
+            int aY = tail.TailposY;
+            int bX = this.TailposX;
+            int aX = tail.TailposX;
+            if (bY - aY == -2 && bX == aX)   // chasing tail is below
+            {
+                this.TailposY += 1;
+                return;
+            }
+            if (bX - aX == 2 && bY == aY)    // chasing tail is to the right 
+            {
+                this.TailposX -= 1;
+                return;
+            }
+            if (bX - aX == -2 && bY == aY)
+            {
+                this.TailposX += 1;
+                return;
+            }
+            if (bY - aY == 2 && bX == aX)
+            {
+                this.TailposY -= 1;
+                return;
+            }
+            // DIAGONALS
+            if (bY - aY == -2 && bX > aX)
+            {
+                this.TailposY += 1;
+                this.TailposX -= 1;
+                return;
+            }
+            if (bY - aY == -2 && bX < aX)
+            {
+                this.TailposY += 1;
+                this.TailposX += 1;
+                return;
+            }
+
+            if (bX - aX == 2 && bY > aY)
+            {
+                this.TailposX -= 1;
+                this.TailposY -= 1;
+                return;
+            }
+            if (bX - aX == 2 && bY < aY)
+            {
+                this.TailposX -= 1;
+                this.TailposY += 1;
+                return;
+            }
+            
+            if (bX - aX == -2 && bY > aY)
+            {
+                this.TailposX += 1;
+                this.TailposY -= 1;
+                return;
+            }
+            if (bX - aX == -2 && bY < aY)
+            {
+                this.TailposX += 1;
+                this.TailposY += 1;
+                return;
+            }
+
+
+            if (bY - aY == 2 && bX > aX)
+            {
+                this.TailposY -= 1;
+                this.TailposX -= 1;
+                return;
+            }
+            if (bY - aY == 2 && bX < aX)
+            {
+                this.TailposY -= 1;
+                this.TailposX += 1;
+                return;
+            }
+            
         }
         public bool Check(Tail tail)
         {

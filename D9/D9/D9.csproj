@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>D9.Part2</StartupObject>
+    <StartupObject>D9.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,6 +54,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="in2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
