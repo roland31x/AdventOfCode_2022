@@ -46,8 +46,10 @@ namespace D9
         public int posY { get; set; }
         public int LastPozX { get; set; }
         public int LastPozY { get; set; }
-        public Tail myTail;
-        public List<Tail> tails;
+
+        public Tail myTail;          // has a single tail
+
+        public List<Tail> tails;   // STORES PAST TAIL POSITIONS
         public Head()
         {
             tails = new List<Tail>();

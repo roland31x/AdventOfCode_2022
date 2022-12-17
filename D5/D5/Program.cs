@@ -13,7 +13,7 @@ namespace D5
         {
             List<Stack<char>> Containers = new List<Stack<char>>
             {
-                new Stack<char>(), // 0 WILL BE UNUSED
+                new Stack<char>(), // 0 WILL BE UNUSED FOR PART 1
                 new Stack<char>(), // 1
                 new Stack<char>(), // 2
                 new Stack<char>(), // 3
