@@ -26,7 +26,7 @@ namespace D12
                     char[] chars = s.ToCharArray();
                     for(int j = 0; j < chars.Length; j++)
                     {
-                        if (chars[j] == 'S' || chars[j] == 'a') 
+                        if (chars[j] == 'S' || chars[j] == 'a')  // remove 2nd condition for part 1
                         {
                             map[i].Add(new Point(chars[j], i, j,'S'));
                            // Console.WriteLine(i+" "+ j);
@@ -159,7 +159,6 @@ namespace D12
         public void FindWay()
         {
             startpoint.Mark = 0;
-            int i = 1;
             startpoint.wasVisited = true;
             queue.Enqueue(startpoint);
             Mark();
