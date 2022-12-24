@@ -82,7 +82,7 @@ namespace D14
                 //Scan.Draw(); 
                 //Thread.Sleep(100);
                 sands++;
-                // BELOW ONLY FOR PART 2
+                // BELOW ONLY FOR PART 1
                 if (Scan.StartSand())
                 {
                     break;
