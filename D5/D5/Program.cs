@@ -28,26 +28,42 @@ namespace D5
 
             using (StreamReader sr = new StreamReader("input.txt"))
             {
-                int cont = 1;
+                // parsing containers
                 while (true)
                 {
                     string p = sr.ReadLine();
-                    if (p == "stop")
+                    if (p == string.Empty || char.IsNumber(p[1]))
                     {
                         break;
                     }
-                    string[] tokens = p.Split(' ');
-                    char[] items = new char[tokens.Length];
-                    for(int i = 0; i < tokens.Length; i++)
+                    char[] items = p.ToCharArray();                   
+                    for(int i = 1, j = 1; i < items.Length; i += 4, j++)
                     {
-                        items[i] = char.Parse(tokens[i]);
+                        if (!char.IsWhiteSpace(items[i]))
+                        {
+                            Containers[j].Push(items[i]);
+                        }                       
                     }
-                    for(int j = 0; j < items.Length; j++)
-                    {
-                        Containers[cont].Push(items[j]);
-                    }
-                    cont++;
                 }
+                // reverse contents of containers
+                for(int i = 0; i < Containers.Count; i++)
+                {
+                    Stack<char> temp = new Stack<char>();
+                        Stack<char> temp2 = new Stack<char>();
+                    while (Containers[i].Count > 0)
+                    {
+                        temp.Push(Containers[i].Pop());                        
+                    }
+                    while(temp.Count > 0)
+                    {
+                        temp2.Push(temp.Pop());
+                    }
+                    while(temp2.Count > 0)
+                    {
+                        Containers[i].Push(temp2.Pop()); 
+                    }
+                }
+
                 /* PART 1
                 while (true)
                 {
@@ -68,12 +84,12 @@ namespace D5
                     }
                 }
                 */
-                while (true)
+                while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine();
-                    if (s == null)
+                    if (s == string.Empty)
                     {
-                        break;
+                        continue;
                     }
                     string[] tokens = s.Split(' ');
                     int[] commands = new int[3];
