@@ -15,7 +15,6 @@ namespace D6
 
             using (StreamReader sr = new StreamReader("input.txt"))
             {
-                bool found = false;
                 string s = sr.ReadToEnd();
                 char[] chars = s.ToCharArray();
                 for(int i = 0; i < chars.Length; i++)
@@ -26,9 +25,9 @@ namespace D6
                     {
                         set.Add(chars[j]);
                     }
-                    if (set.Count == 14)    // PART 1  == 4
+                    if (set.Count == 14)    // PART 1  set.Count == 4
                     {
-                        count = i+14;   // PART 1  i + 4;
+                        count = i+14;   // PART 1  count = i + 4;
                         break;
                     }
                 }
