@@ -46,7 +46,7 @@ namespace D9
         {
             myTails = new List<Tail>() { new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this)};
             tails = new List<Tail>();
-            myTail = myTails[0];
+            myTail = myTails[0]; // referencing main tail as the first tail from the list of tails (lmao)
             posX = 0;
             posY = 0;
         }
