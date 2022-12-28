@@ -14,6 +14,7 @@ namespace D10
         static void Main(string[] args)
         {
             int cycle = 0;
+            Console.WriteLine("Answer for Part 2:");
             using(StreamReader sr = new StreamReader("input.txt"))
             {
                 while (!sr.EndOfStream)
@@ -33,18 +34,23 @@ namespace D10
                     }
                 }
             }
-            Console.WriteLine(Sum);
+            Console.WriteLine();
+            Console.WriteLine("Answer for Part 1: ");
+            Console.Write(Sum);
+            Console.WriteLine();
         }
         public static void Cycle(ref int cycle)
         {
-            // PART 2 
+            // this draws the screen
+
             int refc = cycle % 40;
 
-            if (refc == Reg - 1 || refc == Reg + 1 || refc == Reg )
+            if (refc == Reg - 1 || refc == Reg + 1 || refc == Reg)
             {
                 Console.Write("#");
             }
             else Console.Write(".");
+
             //
 
             cycle++;
@@ -52,12 +58,14 @@ namespace D10
         }
         public static void CycleCheck(int cycle)
         {
-            if (cycle % 40 == 0)  // ( CYCLE + 20 ) % 40 == 0  PART 1
-            {
-               // Sum += Reg * cycle; // - PART 1
-
+            if ( cycle % 40 == 0) // checks for scanline newline
+            {               
                 Console.WriteLine();
-            }           
+            }
+            if( ( cycle + 20 ) % 40 == 0) // checks for part1 criteria
+            {
+                Sum += Reg * cycle;
+            }
         }
     }
 }
