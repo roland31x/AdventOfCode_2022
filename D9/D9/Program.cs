@@ -44,7 +44,7 @@ namespace D9
         public List<Tail> tails;   // STORES PAST TAIL POSITIONS
         public Head()
         {
-            myTails = new List<Tail>() { new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this)}; // NOT NEEDED FOR PART 1
+            myTails = new List<Tail>() { new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this)};
             tails = new List<Tail>();
             myTail = myTails[0];
             posX = 0;
