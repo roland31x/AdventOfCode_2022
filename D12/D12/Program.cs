@@ -26,10 +26,9 @@ namespace D12
                     char[] chars = s.ToCharArray();
                     for(int j = 0; j < chars.Length; j++)
                     {
-                        if (chars[j] == 'S' || chars[j] == 'a')  // remove 2nd condition for part 1
+                        if (chars[j] == 'S' || chars[j] == 'a')  // remove " || chars[j] == 'a' "  condition for part 1 answer
                         {
                             map[i].Add(new Point(chars[j], i, j,'S'));
-                           // Console.WriteLine(i+" "+ j);
                             continue;
                         }
                         if (chars[j] == 'E')
@@ -78,12 +77,10 @@ namespace D12
         public bool isFinish { get; set; }
 
         public int level { get; set; }
-        public bool stop { get; set; }
         public int Mark { get; set; }
 
         public Point(char id, int i, int j)
         {
-            stop = false;
             wasVisited = false;
             Mark = 0;
             level = id - 'a';
@@ -93,7 +90,6 @@ namespace D12
         }
         public Point(char id, int i, int j,char s)
         {
-            stop = false;
             wasVisited = false;
             Mark = 0;
             this.id = id;
@@ -127,11 +123,6 @@ namespace D12
             {
                 foreach(Point p in s)
                 {
-                    //if (p.isMainStart)   // p.isStart for part1
-                    //{
-                    //    startpoint = p;
-                    //    Console.WriteLine(p.posY + p.posY);
-                    //}
                     if(p.isFinish) endpoint = p;
                 }
             }
@@ -162,7 +153,7 @@ namespace D12
             startpoint.wasVisited = true;
             queue.Enqueue(startpoint);
             Mark();
-            //foreach (List<Point> lp in map)
+            //foreach (List<Point> lp in map)          // you can draw the map with this
             //{
             //    foreach (Point p in lp)
             //    {

@@ -140,7 +140,6 @@ namespace D13
                     }
                 }
                 Console.WriteLine(sum);
-
             }
         }
         public static void InsertionSort(List<ListConv> list)
