@@ -60,16 +60,17 @@ namespace D7
                 }                            
             }
 
-            /* PART 1
-            List<Folder> OK = new List<Folder>();
-            CheckBig(MainFolder, OK);
+            // PART 1
+            List<Folder> OKP1 = new List<Folder>();
+            CheckBig(MainFolder, OKP1);
             ulong sum = 0;
-            foreach(Folder Nice in OK)
+            foreach (Folder Nice in OKP1)
             {
                 sum += Nice.GetSize();
             }
-            Console.WriteLine(sum);
-            */ 
+            Console.WriteLine("Part 1 answer : " + sum);
+            Console.WriteLine();
+            // PART 2 STARTS HERE
 
             ulong totalspace = 70000000;
             ulong usedspace = MainFolder.GetSize();
@@ -84,11 +85,12 @@ namespace D7
                 CheckBigP2(MainFolder, OK, spaceneeded, offset);
                 offset *= 10;
             }
+            Console.Write("Part 2 answer: ");
             foreach(Folder f in OK)
             {
-                Console.WriteLine(f.GetSize());
+                Console.Write(f.GetSize());
             }
-            
+            Console.WriteLine();
         }
         public static void CheckBigP2(Folder f, List<Folder> OK, ulong space, ulong offset)
         {
