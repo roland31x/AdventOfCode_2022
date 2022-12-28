@@ -12,6 +12,8 @@ namespace D9
     {
         static void Main(string[] args)
         {
+            // TO SWITCH BETWEEN PART 1 AND PART 2 CHECK COMMENTS FROM LINES 70 TO 110
+
             int sum = 0;
             Head thisHead = new Head();
             using (StreamReader sr = new StreamReader("input.txt"))
@@ -31,13 +33,13 @@ namespace D9
     }
     class Head
     {
-        public List<Tail> myTails { get; set; }  // NOT NEEDED FOR PART 1
+        public List<Tail> myTails { get; set; }  
         public int posX { get; set; }
         public int posY { get; set; }
         public int LastPozX { get; set; }
         public int LastPozY { get; set; }
 
-        public Tail myTail;          // has a single tail
+        public Tail myTail;          // has a single main tail ( has different movement compared to the other tails )
 
         public List<Tail> tails;   // STORES PAST TAIL POSITIONS
         public Head()
@@ -68,21 +70,42 @@ namespace D9
                         MoveDown();
                         break;
                 }
-                TailsCheck();  // ONLY USE TAILCHECK() FOR PART 1 
+                // TailCheck();  // USE THIS FOR PART 1
+                TailsCheck();  // USE THIS FOR PART 2
                 times--;
                 bool OK = true;
                 foreach (Tail t in tails)
                 {
+                    //// USE THIS FOR PART 1
+
+                    //if (t.Check(myTail))
+                    //{
+                    //    OK = false;
+                    //    break;
+                    //}
+
+                    //// COMMENT THE PART BELOW FOR PART 1
+
                     if (t.Check(myTails[8]))
                     {
                         OK = false;
                         break;
                     }
+
+                    //// UNTIL HERE
                 }
                 if (OK)
                 {
-                    tails.Add(new Tail(myTails[8].TailposX, myTails[8].TailposY));   // ADD myTail instead of myTails[8] for PART 1
-                }                             
+                    //// USE THIS FOR PART 1
+
+                    //tails.Add(new Tail(myTail.TailposX, myTail.TailposY));
+
+                    //// COMMENT THE PART BELOW FOR PART 1
+
+                    tails.Add(new Tail(myTails[8].TailposX, myTails[8].TailposY));
+
+                    //// UNTIL HERE
+                }
             }
         }
         public void MoveRight()
