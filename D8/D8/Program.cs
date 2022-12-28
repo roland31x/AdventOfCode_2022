@@ -12,6 +12,8 @@ namespace D8
     {
         static void Main(string[] args)
         {
+            // this code will display both answers without the need to change anything
+            
             List<List<Tree>> list = new List<List<Tree>>();
 
             using (StreamReader sr = new StreamReader("input.txt"))
@@ -31,25 +33,26 @@ namespace D8
                     i++;
                 }
             }
-            //int count = 0;
+            int count = 0;
             int score = 0;
             foreach(List<Tree> treegrid in list) 
             {
                 foreach(Tree tree in treegrid)
                 {
                     tree.VisibilityCheck(list);
-                    //if (tree.IsVisible)  // PART 1
-                    //{
-                    //    count++;
-                    //}
-                        int helper = tree.ScenicScore(list);
-                        if(helper > score)
-                        {
-                            score = helper;
-                        }
+                    if (tree.IsVisible)  // PART 1
+                    {
+                        count++;
+                    }
+                    int helper = tree.ScenicScore(list);
+                    if(helper > score)
+                    {
+                        score = helper;
+                    }
                 }
             }
-            Console.WriteLine(score);
+            Console.WriteLine("Number of visible trees: " + count);
+            Console.WriteLine("Highest possible scenic score: " + score);
         }
     }
     class Tree
