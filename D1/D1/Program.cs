@@ -12,9 +12,8 @@ namespace D1
         static void Main(string[] args)
         {
             ulong Calories = 0;
-            int Counter = 1;
+            ulong p1 = 0;
             ulong maxCal = 0;
-            int maxCalIndex = 0;
             List<ulong> list = new List<ulong>();
             using (StreamReader sr = new StreamReader("input.txt"))
             {
@@ -37,7 +36,7 @@ namespace D1
                    
             }
 
-            // maxCal = list.Max() - PART 1
+            p1 = list.Max();
 
             for(int i = 0; i < 3; i++)
             {
@@ -46,8 +45,8 @@ namespace D1
             }
             
             
-            Console.WriteLine();
-            Console.WriteLine(maxCal);
+            Console.WriteLine("Part 1 answer: " + p1);
+            Console.WriteLine("Part 2 answer: " + maxCal);
 
         }
     }
