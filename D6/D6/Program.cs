@@ -27,7 +27,7 @@ namespace D6
                     }
                     if (set.Count == 14)    // PART 1  set.Count == 4
                     {
-                        count = i+14;   // PART 1  count = i + 4;
+                        count = i + 14;   // PART 1  count = i + 4;
                         break;
                     }
                 }
