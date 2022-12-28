@@ -14,6 +14,8 @@ namespace D11
     {
         static void Main(string[] args)
         {
+            // TO SWITCH BETWEEN PART 1 AND PART 2 ANSWERS CHECK COMMENTS AT LINES: 64 , 145
+
             MonkeyList monkeys = new MonkeyList();
 
             using (StreamReader sr = new StreamReader("input.txt"))
@@ -59,7 +61,7 @@ namespace D11
                     monkeys.Add(monke);                                
                 }
             }
-            for(int i = 1; i <= 10000; i++)  // 20 for part 1
+            for(int i = 1; i <= 10000; i++)  // USE i <= 20 for part 1
             {
                 foreach(Monkey monke in monkeys.monkeyList)
                 {
@@ -140,7 +142,7 @@ namespace D11
                     {
                         items[0] = (items[0] % maxdiv) * (items[0] % maxdiv);
                     }
-                   // items[0] = items[0] / 3;  // PART 1
+                    // items[0] = items[0] / 3;  // UNCOMMENT THIS FOR PART 1 , COMMENT IT FOR PART 2
                     DoTest(items[0], monks);
                 }
             }
