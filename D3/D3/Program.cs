@@ -53,6 +53,7 @@ namespace D3
                     //    if (found) break;
                     //}
                     // PART 1 UNTIL HERE
+
                     // PART 2 FROM HERE
                     List<List<char>> Group = new List<List<char>>
                     {
