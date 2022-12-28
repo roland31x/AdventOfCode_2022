@@ -64,26 +64,29 @@ namespace D5
                     }
                 }
 
-                /* PART 1
-                while (true)
-                {
-                    string s = sr.ReadLine();
-                    if (s == null)
-                    {
-                        break;
-                    }
-                    string[] tokens = s.Split(' ');
-                    int[] commands = new int[3];
-                    commands[0] = int.Parse(tokens[1]);
-                    commands[1] = int.Parse(tokens[3]);
-                    commands[2] = int.Parse(tokens[5]);
-                    while (commands[0] > 0)
-                    {
-                        Containers[commands[2]].Push(Containers[commands[1]].Pop());
-                        commands[0]--;
-                    }
-                }
-                */
+                // FROM HERE FOR PART 1 
+
+                //while (true)
+                //{
+                //    string s = sr.ReadLine();
+                //    if (s == null)
+                //    {
+                //        break;
+                //    }
+                //    string[] tokens = s.Split(' ');
+                //    int[] commands = new int[3];
+                //    commands[0] = int.Parse(tokens[1]);
+                //    commands[1] = int.Parse(tokens[3]);
+                //    commands[2] = int.Parse(tokens[5]);
+                //    while (commands[0] > 0)
+                //    {
+                //        Containers[commands[2]].Push(Containers[commands[1]].Pop());
+                //        commands[0]--;
+                //    }
+                //}
+
+                // UNTIL HERE FOR PART 1, FROM HERE FOR PART 2 // COMMENT ONE PART AND DE-COMMENT THE OTHER DEPENDING ON WHICH PART U WANT
+
                 while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine();
@@ -106,6 +109,8 @@ namespace D5
                         Containers[commands[2]].Push(Containers[0].Pop());
                     }
                 }
+
+                // UNTIL HERE FOR PART 2
             }
             StringBuilder str = new StringBuilder();
             for(int i = 1; i < Containers.Count; i++)
