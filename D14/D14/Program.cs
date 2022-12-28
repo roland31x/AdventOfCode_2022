@@ -13,6 +13,8 @@ namespace D14
     {
         static void Main(string[] args)
         {
+            // FOR PART 1 GO TO LINE 132 AND COMMENT THE LAST PART OF THE FUNCTION BELOW MY MARKED COMMENT ( RESULT WILL BE 1 HIGHER THAN ANSWER BECAUSE IT COUNTS THE SPAWNED SAND THAT WILL FALL INTO ABYSS )
+            // FOR PART 2 UNCOMMENT IT
             Map Scan = new Map(1000, 1000);
             using (StreamReader sr = new StreamReader("input.txt"))
             {
@@ -74,7 +76,7 @@ namespace D14
                 }
             }
             Scan.FindMinPoint();
-            // Scan.Draw();
+            // Scan.Draw(); // visualization of the scan
             int sands = 0;
             while (!Scan.reachedAbyss)
             {
@@ -82,7 +84,6 @@ namespace D14
                 //Scan.Draw(); 
                 //Thread.Sleep(100);
                 sands++;
-                // BELOW ONLY FOR PART 1
                 if (Scan.StartSand())
                 {
                     break;
@@ -90,7 +91,7 @@ namespace D14
                 //Console.Clear();
             }
             //Scan.Draw();
-            Console.WriteLine(sands); // USE SANDS - 1 FOR PART 1 coz it will drop a sand to check for abyss.
+            Console.WriteLine(sands); // USE (sands - 1) FOR PART 1 coz it will drop a sand to check for abyss.
         }
     }
     public class Map
@@ -128,12 +129,15 @@ namespace D14
                 }
             }
             minPoint = minY + 2;
-            // BELOW NOT FOR PART 1
+
+            // BELOW ONLY FOR PART 2
+
             for (int i = 0; i < map[0].Count; i++)
             {
                 map[minPoint][i].isRock = true;
             }
-            // Console.WriteLine(minPoint);
+
+            // COMMENT THIS PART FOR PART 1 ANSWER
         }
         public void Draw()
         {
