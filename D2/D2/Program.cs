@@ -12,6 +12,7 @@ namespace D2
         static void Main(string[] args)
         {
             ulong Sum = 0;
+            ulong Sum2 = 0;
           
             List<ulong> list = new List<ulong>();
             using (StreamReader sr = new StreamReader("input.txt"))
@@ -24,10 +25,9 @@ namespace D2
                         break;
                     }
                     string[] chars = s.Split(' ');
-                    /*
-                     * PART 1
                     // A = ROCK, B = PAPER, C = SCISSORS
                     // Y = PAPER, X = ROCK, Z = SCISSORS
+
                     switch (chars[1])
                     {
                         case "X":
@@ -73,7 +73,7 @@ namespace D2
                             Sum += 3;
                             break;
                     }
-                    */
+
                     // A = ROCK, B = PAPER, C = SCISSORS
                     // Y = DRAW, X = LOSE, Z = WIN
                     switch (chars[1])
@@ -82,13 +82,13 @@ namespace D2
                             switch (chars[0])
                             {
                                 case "A":
-                                    Sum += 3;
+                                    Sum2 += 3;
                                     break;
                                 case "B":
-                                    Sum += 1;
+                                    Sum2 += 1;
                                     break;
                                 case "C":
-                                    Sum += 2;
+                                    Sum2 += 2;
                                     break;
                             }
                             break;
@@ -96,35 +96,36 @@ namespace D2
                             switch (chars[0])
                             {
                                 case "A":
-                                    Sum += 1;
+                                    Sum2 += 1;
                                     break;
                                 case "B":
-                                    Sum += 2;
+                                    Sum2 += 2;
                                     break;
                                 case "C":
-                                    Sum += 3;
+                                    Sum2 += 3;
                                     break;
                             }
-                            Sum += 3;
+                            Sum2 += 3;
                             break;
                         case "Z":
                             switch (chars[0])
                             {
                                 case "A":
-                                    Sum += 2;
+                                    Sum2 += 2;
                                     break;
                                 case "B":
-                                    Sum += 3;
+                                    Sum2 += 3;
                                     break;
                                 case "C":
-                                    Sum += 1;
+                                    Sum2 += 1;
                                     break;
                             }
-                            Sum += 6;
+                            Sum2 += 6;
                             break;
                     }
                 }
-                Console.WriteLine(Sum);
+                Console.WriteLine("Part 1 answer: " + Sum);
+                Console.WriteLine("Part 2 answer: " + Sum2);
             }
         }
     }
