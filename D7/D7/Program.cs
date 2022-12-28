@@ -11,6 +11,8 @@ namespace D7
     {
         static void Main(string[] args)
         {
+            // THIS PROGRAM WILL DISPLAY THE ANSWERS FOR BOTH PARTS WITHOUT HAVING TO COMMENT / UNCOMMENT LINES
+            
             Folder MainFolder = new Folder("Main");
             CurrentFolder Current = new CurrentFolder(MainFolder);
             
