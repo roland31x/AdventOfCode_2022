@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -68,34 +69,154 @@ namespace D16
 
 
             //Console.WriteLine(Max);
-            firstRun.CalcPot();
+            Console.WriteLine(firstRun.CalcPot());
             firstRun.NavigateTo("DD");
+
             //Console.WriteLine($"Minute {firstRun.Minute}");
             firstRun.ActivateValve();
             firstRun.Potentials.Add(560);
             Console.WriteLine($"Minute {firstRun.Minute}, DD open");
-            firstRun.CalcPot();
-            firstRun.NavigateTo("JJ");
+
+            Console.WriteLine(firstRun.CalcPot());
+            firstRun.NavigateTo("EE");
             Console.WriteLine($"Minute {firstRun.Minute}, DD, JJ open");
             firstRun.ActivateValve();
-            firstRun.Potentials.Add(504);
-            firstRun.CalcPot();
+            firstRun.Potentials.Add(78);
+            Console.WriteLine(firstRun.CalcPot());
+            //firstRun.Solve2();
+            //int sum = 0;
+            //foreach (int i in firstRun.P)
+            //{
+            //    sum += i;
+            //}
+            //Console.WriteLine(sum);
 
+        }
+    }
+    class Average
+    {
+        public string ID { get; set; }
+        public int Val { get; set; }
+
+        public Average(string s, int i)
+        {
+            ID = s;
+            Val = i;
+        }
+        public override string ToString()
+        {
+            return $"AVG: {ID} = {Val}";
+        }
+    }
+    class Potential
+    {
+        public string ID { get; set; }
+        public int Val { get; set; }
+
+        public Potential(string s, int i) 
+        {
+            ID = s;
+            Val = i;
+        }
+        public override string ToString()
+        {
+            return $"P: {ID} = {Val}";
         }
     }
     class Driver
     {
+        public List<Valve> Order = new List<Valve>();
+        public List<int> P = new List<int>();
+
         public List<int> Potentials = new List<int>();
         public int Score { get; set; }
         public int Minute { get; set; }
+        public Valve rewindTo { get; set; }
+        public int ToRewind { get; set; }
         public Valve current { get; set; }
         public Driver() 
         {
             current = Valve.Find("AA");
             Score = 0;
             Minute = 0;
+            ToRewind = 0;
         }
-        public void CalcPot()
+        public void Solve2()
+        {
+            for(int run = 0; run < Valve.Flows.Count; run++)
+            {
+                List<Potential> pots = new List<Potential>();
+                List<Average> avgs = new List<Average>();
+                rewindTo = current;
+                foreach(Valve v in Valve.Flows)
+                {
+                    if (!v.wasSolved)
+                    {
+                        ToRewind = 0;
+                        Valve.ResetAll();
+
+                        Potentials = new List<int>();
+
+                        int pot = CalcSinglePot(v);
+                        pots.Add(new Potential(v.ID, pot));
+                        Potentials.Add(pot);
+                        NavigateTo(v.ID);
+                        ActivateValve();
+                        int average = CalcPot();
+                        avgs.Add(new Average(v.ID, average));
+
+                        Rewind();
+                    }                   
+                }
+                int max = 0;
+                string name = "";
+                for(int i = 0; i < avgs.Count; i++)
+                {
+                    if (avgs[i].Val > max)
+                    {
+                        max = avgs[i].Val;
+                        name = avgs[i].ID;
+                    }
+                }
+                Order.Add(Valve.Find(name));
+                NavigateTo(name);
+                ActivateValve();
+                foreach(Potential p in pots)
+                {
+                    if(p.ID == name)
+                    {
+                        P.Add(p.Val);
+                    }
+                }
+                foreach(Valve v in Order)
+                {
+                    v.wasSolved = true;
+                }
+            } // D > B > J > H > E > C
+        }
+        public void Rewind()
+        {
+            TP(rewindTo);
+            Minute -= ToRewind;
+        }
+        public void TP(Valve v)
+        {
+            current = v;
+        }
+        public int CalcSinglePot(Valve v)
+        {
+            int dist = 0;
+            foreach(VDist k in current.Distance)
+            {
+                if(k.Name == v.ID)
+                {
+                    dist = k.Dist;
+                    break;
+                }
+            }
+            return ((29 - Minute) - dist) * v.Flow;
+        }
+        public int CalcPot()
         {
             int i = 0;
             int j = 0;
@@ -109,33 +230,19 @@ namespace D16
                     Console.WriteLine($"{v.ID} = {(29 - Minute) - current.Distance[i].Dist} * {v.Flow} = {((29 - Minute) - current.Distance[i].Dist) * v.Flow} ");
                 }
                 i++;
-                
             }
-            foreach(int k in Potentials)
+            foreach (int k in Potentials)
             {
                 average += k;
             }
-            average = average / j + Potentials.Count;
-            Console.WriteLine(average);
+            return average;
         }
         public void Solve()
         {
             Valve[] rank = new Valve[Valve.Flows.Count];
-            for (int i = 0; i < Valve.Flows.Count; i++)
-            {
-                rank[i] = Valve.Flows[i];
-            }
-            for (int i = 0; i < rank.Length - 1; i++)
-            {
-                for (int j = i + 1; j < rank.Length; j++)
-                {
-                    if (rank[i].Flow < rank[j].Flow)
-                    {
-                        (rank[i], rank[j]) = (rank[j], rank[i]);
-                    }
-                }
-            }
+
             List<Valve> ranks = rank.ToList();             //new List<Valve> { Valve.Find("DD"), Valve.Find("BB"),Valve.Find("JJ"),Valve.Find("HH"),Valve.Find("EE"),Valve.Find("CC") };
+            
             while(Minute < 30)
             {
                 foreach(Valve v in ranks)
@@ -169,7 +276,8 @@ namespace D16
                     for(int j = 0; j < current.Distance[i].Dist; j++)
                     {
                         Minute++;
-                        CalcScore();
+                        ToRewind++;
+                        //CalcScore();
                         if (Minute >= 30)
                         {
                             return;
@@ -183,9 +291,10 @@ namespace D16
         }
         public void ActivateValve()
         {
-            CalcScore();
+            //CalcScore();
             current.Open();
             Minute++;
+            ToRewind++;
         }
         public void CalcScore()
         {
@@ -283,11 +392,14 @@ namespace D16
         public bool IsOpen { get; set; }
         public int Mark { get; set; }
         public bool Visited { get; set; }
+
+        public bool wasSolved { get; set; }
         public Valve(string s)
         {
             ID = s;
             IsOpen = false;
             Visited = false;
+            wasSolved = false;
             Mark = 0;
             Cons = new List<Valve>();
             Distance = new List<VDist>();
@@ -310,6 +422,16 @@ namespace D16
         public void Open()
         {
             IsOpen = true;
+        }
+        public static void ResetAll()
+        {
+            foreach(Valve v in ValveList)
+            {
+                if (!v.wasSolved)
+                {
+                    v.IsOpen = false;
+                }               
+            }
         }
         public static void ResetDist()
         {
