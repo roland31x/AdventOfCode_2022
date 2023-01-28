@@ -69,28 +69,33 @@ namespace D16
 
 
             //Console.WriteLine(Max);
-            Console.WriteLine(firstRun.CalcPot());
-            firstRun.NavigateTo("DD");
+            //Console.WriteLine(firstRun.CalcPot());
+            //firstRun.NavigateTo("DD");
 
-            //Console.WriteLine($"Minute {firstRun.Minute}");
-            firstRun.ActivateValve();
-            firstRun.Potentials.Add(560);
-            Console.WriteLine($"Minute {firstRun.Minute}, DD open");
+            ////Console.WriteLine($"Minute {firstRun.Minute}");
+            ////firstRun.ActivateValve();
+            ////firstRun.Potentials.Add(560);
+            ////Console.WriteLine($"Minute {firstRun.Minute}, DD open");
 
-            Console.WriteLine(firstRun.CalcPot());
-            firstRun.NavigateTo("EE");
-            Console.WriteLine($"Minute {firstRun.Minute}, DD, JJ open");
-            firstRun.ActivateValve();
-            firstRun.Potentials.Add(78);
-            Console.WriteLine(firstRun.CalcPot());
+            ////Console.WriteLine(firstRun.CalcPot());
+            ////firstRun.NavigateTo("EE");
+            ////Console.WriteLine($"Minute {firstRun.Minute}, DD, JJ open");
+            ////firstRun.ActivateValve();
+            ////firstRun.Potentials.Add(78);
+            ////Console.WriteLine(firstRun.CalcPot());
 
-            //firstRun.Solve2();
+            firstRun.Solve2();
             //int sum = 0;
             //foreach (int i in firstRun.P)
             //{
             //    sum += i;
             //}
             //Console.WriteLine(sum);
+            firstRun.Reset();
+            Valve.HardReset();
+            firstRun.Solve(firstRun.Order);
+            //firstRun.CalcScore();
+            Console.WriteLine(firstRun.Score);
 
         }
     }
@@ -131,21 +136,25 @@ namespace D16
 
         public List<int> Potentials = new List<int>();
         public int Score { get; set; }
+        public int MaxScore { get; set; }
         public int Minute { get; set; }
         public Valve rewindTo { get; set; }
         public int ToRewind { get; set; }
         public Valve current { get; set; }
+        public static int contor = 0;
         public Driver() 
         {
             current = Valve.Find("AA");
             Score = 0;
             Minute = 0;
             ToRewind = 0;
+            MaxScore = 0;
         }
         public void Solve2()
         {
             for(int run = 0; run < Valve.Flows.Count; run++)
             {
+                Console.WriteLine($"{run} node");
                 List<Potential> pots = new List<Potential>();
                 List<Average> avgs = new List<Average>();
                 rewindTo = current;
@@ -169,11 +178,17 @@ namespace D16
                         Rewind();
                     }                   
                 }
-                int max = 0;
+                int mean = 0;
+                for (int j = 0; j < pots.Count; j++)
+                {
+                    mean += pots[j].Val;
+                }
+                mean /= pots.Count;
+                int max = Int32.MinValue;
                 string name = "";
                 for(int i = 0; i < avgs.Count; i++)
-                {
-                    if (avgs[i].Val > max)
+                {                   
+                    if (pots[i].Val >= mean && avgs[i].Val > max)
                     {
                         max = avgs[i].Val;
                         name = avgs[i].ID;
@@ -215,7 +230,15 @@ namespace D16
                     break;
                 }
             }
-            return ((29 - Minute) - dist) * v.Flow;
+            int lost = 0;
+            foreach(Valve vs in Valve.Flows)
+            {
+                if(!(vs.ID == v.ID) && !vs.IsOpen)
+                {
+                    lost += vs.Flow;
+                }
+            }
+            return (((29 - Minute) - dist) * v.Flow );
         }
         public int CalcPot()
         {
@@ -226,7 +249,13 @@ namespace D16
             {
                 if (!(v.ID == current.ID) && v.IsOpen == false)
                 {
-                    average += ((29 - Minute) - current.Distance[i].Dist) * v.Flow;
+                    //average += ((29 - Minute) - current.Distance[i].Dist) * v.Flow;
+                    int toadd = CalcSinglePot(v);
+                    if (toadd < 0)
+                    {
+                        continue;
+                    }
+                    average += CalcSinglePot(v);
                     j++;
                     Console.WriteLine($"{v.ID} = {(29 - Minute) - current.Distance[i].Dist} * {v.Flow} = {((29 - Minute) - current.Distance[i].Dist) * v.Flow} ");
                 }
@@ -236,17 +265,20 @@ namespace D16
             {
                 average += k;
             }
+            //foreach(Valve v in Valve.Flows)
+            //{
+            //    if (!v.IsOpen)
+            //       // average -= v.Flow;
+            //}
             return average;
-        }
-        public void Solve()
+        }      
+        public void Solve(List<Valve> perm)
         {
-            Valve[] rank = new Valve[Valve.Flows.Count];
-
-            List<Valve> ranks = rank.ToList();             //new List<Valve> { Valve.Find("DD"), Valve.Find("BB"),Valve.Find("JJ"),Valve.Find("HH"),Valve.Find("EE"),Valve.Find("CC") };
+           //new List<Valve> { Valve.Find("DD"), Valve.Find("BB"),Valve.Find("JJ"),Valve.Find("HH"),Valve.Find("EE"),Valve.Find("CC") };
             
             while(Minute < 30)
             {
-                foreach(Valve v in ranks)
+                foreach(Valve v in perm)
                 {                   
                     NavigateTo(v.ID);
                     if(Minute >= 30)
@@ -276,9 +308,9 @@ namespace D16
                 {                   
                     for(int j = 0; j < current.Distance[i].Dist; j++)
                     {
+                        CalcScore();
                         Minute++;
-                        ToRewind++;
-                        //CalcScore();
+                        ToRewind++;                        
                         if (Minute >= 30)
                         {
                             return;
@@ -292,7 +324,7 @@ namespace D16
         }
         public void ActivateValve()
         {
-            //CalcScore();
+            CalcScore();
             current.Open();
             Minute++;
             ToRewind++;
@@ -432,6 +464,13 @@ namespace D16
                 {
                     v.IsOpen = false;
                 }               
+            }
+        }
+        public static void HardReset()
+        {
+            foreach (Valve v in ValveList)
+            {
+                    v.IsOpen = false;
             }
         }
         public static void ResetDist()
