@@ -83,6 +83,7 @@ namespace D16
             firstRun.ActivateValve();
             firstRun.Potentials.Add(78);
             Console.WriteLine(firstRun.CalcPot());
+
             //firstRun.Solve2();
             //int sum = 0;
             //foreach (int i in firstRun.P)
