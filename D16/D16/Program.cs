@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace D16
 {
@@ -57,45 +59,10 @@ namespace D16
             //firstRun.CalcDist();
             firstRun.CalcDist();
             firstRun.Reset();
-            int Max = 0;
-
-            //firstRun.Solve();
-            //int score = firstRun.Score;
-
-            //if(score > Max)
-            //{
-            //    Max = score;
-            //}
-
-
-            //Console.WriteLine(Max);
-            //Console.WriteLine(firstRun.CalcPot());
-            //firstRun.NavigateTo("DD");
-
-            ////Console.WriteLine($"Minute {firstRun.Minute}");
-            ////firstRun.ActivateValve();
-            ////firstRun.Potentials.Add(560);
-            ////Console.WriteLine($"Minute {firstRun.Minute}, DD open");
-
-            ////Console.WriteLine(firstRun.CalcPot());
-            ////firstRun.NavigateTo("EE");
-            ////Console.WriteLine($"Minute {firstRun.Minute}, DD, JJ open");
-            ////firstRun.ActivateValve();
-            ////firstRun.Potentials.Add(78);
-            ////Console.WriteLine(firstRun.CalcPot());
-
-            firstRun.Solve2();
-            //int sum = 0;
-            //foreach (int i in firstRun.P)
-            //{
-            //    sum += i;
-            //}
-            //Console.WriteLine(sum);
-            firstRun.Reset();
-            Valve.HardReset();
-            firstRun.Solve(firstRun.Order);
-            //firstRun.CalcScore();
-            Console.WriteLine(firstRun.Score);
+            Console.WriteLine("Part1:");
+            firstRun.SolveDay16Part1();
+            Console.WriteLine("Part2:");
+            firstRun.SolveDay16Part2();
 
         }
     }
@@ -129,219 +96,90 @@ namespace D16
             return $"P: {ID} = {Val}";
         }
     }
-    class Driver
-    {
-        public List<Valve> Order = new List<Valve>();
-        public List<int> P = new List<int>();
-
-        public List<int> Potentials = new List<int>();
-        public int Score { get; set; }
-        public int MaxScore { get; set; }
-        public int Minute { get; set; }
-        public Valve rewindTo { get; set; }
-        public int ToRewind { get; set; }
+    class Driver 
+    { 
         public Valve current { get; set; }
-        public static int contor = 0;
         public Driver() 
         {
             current = Valve.Find("AA");
-            Score = 0;
-            Minute = 0;
-            ToRewind = 0;
-            MaxScore = 0;
         }
-        public void Solve2()
+        
+        public void SolveDay16Part2()
         {
-            for(int run = 0; run < Valve.Flows.Count; run++)
+            int max = 0;
+            List<Valve> main = Valve.Flows;
+            Valve[] arr = new Valve[main.Count];
+            for(int i = 0; i < main.Count; i++)
             {
-                Console.WriteLine($"{run} node");
-                List<Potential> pots = new List<Potential>();
-                List<Average> avgs = new List<Average>();
-                rewindTo = current;
-                foreach(Valve v in Valve.Flows)
-                {
-                    if (!v.wasSolved)
-                    {
-                        ToRewind = 0;
-                        Valve.ResetAll();
+                arr[i] = main[i];
+            }
+            for(int i = 1; i < main.Count - 1 / 2; i++) // tries every combination of workload
+            {
+                GetCombination(arr, main.Count, i, ref max);
+            }            
+            Console.WriteLine(max);
+        }
 
-                        Potentials = new List<int>();
+        void Combination(Valve[] arr, Valve[] data, int start, int end, int index, int r, ref int maxscoresofar)
+        {
+            if (index == r)
+            {
+                List<Valve> playerlist = data.ToList(); // player workload
+                int P1Score = CalcScore(playerlist, 1, this.current, 26);
+                List<Valve> other = Valve.Flows.Where(x => !playerlist.Contains(x)).ToList(); // elephant workload
+                int P2Score = CalcScore(other, 1, this.current, 26);
+                if(P1Score + P2Score > maxscoresofar)
+                {
+                    maxscoresofar = P1Score + P2Score;
+                }
+                return;
+            }
+            for (int i = start; i <= end && end - i + 1 >= r - index; i++)
+            {
+                data[index] = arr[i];
+                Combination(arr, data, i + 1, end, index + 1, r, ref maxscoresofar);
+            }
+        }
 
-                        int pot = CalcSinglePot(v);
-                        pots.Add(new Potential(v.ID, pot));
-                        Potentials.Add(pot);
-                        NavigateTo(v.ID);
-                        ActivateValve();
-                        int average = CalcPot();
-                        avgs.Add(new Average(v.ID, average));
+        void GetCombination(Valve[] arr, int n, int r, ref int maxscoresofar)
+        {
+            Valve[] data = new Valve[r];
+            Combination(arr, data, 0, n - 1, 0, r, ref maxscoresofar);
+        }
 
-                        Rewind();
-                    }                   
-                }
-                int mean = 0;
-                for (int j = 0; j < pots.Count; j++)
-                {
-                    mean += pots[j].Val;
-                }
-                mean /= pots.Count;
-                int max = Int32.MinValue;
-                string name = "";
-                for(int i = 0; i < avgs.Count; i++)
-                {                   
-                    if (pots[i].Val >= mean && avgs[i].Val > max)
-                    {
-                        max = avgs[i].Val;
-                        name = avgs[i].ID;
-                    }
-                }
-                Order.Add(Valve.Find(name));
-                NavigateTo(name);
-                ActivateValve();
-                foreach(Potential p in pots)
-                {
-                    if(p.ID == name)
-                    {
-                        P.Add(p.Val);
-                    }
-                }
-                foreach(Valve v in Order)
-                {
-                    v.wasSolved = true;
-                }
-            } // D > B > J > H > E > C
-        }
-        public void Rewind()
+        public void SolveDay16Part1()
         {
-            TP(rewindTo);
-            Minute -= ToRewind;
+            int minute = 1;
+            Valve current = this.current;
+            Console.WriteLine(CalcScore(Valve.Flows, minute, current,30));
         }
-        public void TP(Valve v)
+        public int CalcScore(List<Valve> v, int minute, Valve current, int maxmins)
         {
-            current = v;
-        }
-        public int CalcSinglePot(Valve v)
-        {
-            int dist = 0;
-            foreach(VDist k in current.Distance)
+            if(minute > maxmins) 
             {
-                if(k.Name == v.ID)
+                return 0;
+            }
+            if(v.Count == 0)
+            {
+                return 0;
+            }
+            int[] scores = new int[v.Count];
+            for (int i = 0; i < v.Count; i++)
+            {
+                int multiplier = maxmins - (minute + current.DistanceTo(v[i]));
+                if (multiplier < 0)
                 {
-                    dist = k.Dist;
-                    break;
+                    continue;
                 }
+                scores[i] += multiplier * v[i].Flow;
+                scores[i] += CalcScore(v.Where(x => x != v[i]).ToList(), minute + 1 + current.DistanceTo(v[i]), v[i], maxmins);
             }
-            int lost = 0;
-            foreach(Valve vs in Valve.Flows)
-            {
-                if(!(vs.ID == v.ID) && !vs.IsOpen)
-                {
-                    lost += vs.Flow;
-                }
-            }
-            return (((29 - Minute) - dist) * v.Flow );
-        }
-        public int CalcPot()
-        {
-            int i = 0;
-            int j = 0;
-            int average = 0;
-            foreach(Valve v in Valve.Flows)
-            {
-                if (!(v.ID == current.ID) && v.IsOpen == false)
-                {
-                    //average += ((29 - Minute) - current.Distance[i].Dist) * v.Flow;
-                    int toadd = CalcSinglePot(v);
-                    if (toadd < 0)
-                    {
-                        continue;
-                    }
-                    average += CalcSinglePot(v);
-                    j++;
-                    Console.WriteLine($"{v.ID} = {(29 - Minute) - current.Distance[i].Dist} * {v.Flow} = {((29 - Minute) - current.Distance[i].Dist) * v.Flow} ");
-                }
-                i++;
-            }
-            foreach (int k in Potentials)
-            {
-                average += k;
-            }
-            //foreach(Valve v in Valve.Flows)
-            //{
-            //    if (!v.IsOpen)
-            //       // average -= v.Flow;
-            //}
-            return average;
-        }      
-        public void Solve(List<Valve> perm)
-        {
-           //new List<Valve> { Valve.Find("DD"), Valve.Find("BB"),Valve.Find("JJ"),Valve.Find("HH"),Valve.Find("EE"),Valve.Find("CC") };
-            
-            while(Minute < 30)
-            {
-                foreach(Valve v in perm)
-                {                   
-                    NavigateTo(v.ID);
-                    if(Minute >= 30)
-                    {
-                        return;
-                    }
-                    ActivateValve();
-                    if (Minute >= 30)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
+
+            return scores.ToList().Max();
+        }    
         public void Reset()
         {
             current = Valve.Find("AA");
-            Score = 0;
-            Minute = 0;
-        }
-        public void NavigateTo(string s)
-        {           
-            int i = 0;
-            foreach(Valve v in Valve.Flows)
-            {
-                if(v.ID == s)
-                {                   
-                    for(int j = 0; j < current.Distance[i].Dist; j++)
-                    {
-                        CalcScore();
-                        Minute++;
-                        ToRewind++;                        
-                        if (Minute >= 30)
-                        {
-                            return;
-                        }                        
-                    }
-                    break;
-                }
-                i++;
-            }
-            current = Valve.Find(s);
-        }
-        public void ActivateValve()
-        {
-            CalcScore();
-            current.Open();
-            Minute++;
-            ToRewind++;
-        }
-        public void CalcScore()
-        {
-            //Console.WriteLine("Minute " + Minute);
-            foreach(Valve v in Valve.ValveList)
-            {
-                if (v.IsOpen)
-                {
-                    //Console.Write($"{v.ID} ");
-                    Score += v.Flow;
-                }
-            }
-            //Console.Write(Score);
-            //Console.WriteLine();
         }
         public void CalcDist()
         {
@@ -421,7 +259,6 @@ namespace D16
         public int Flow { get; set; }
         public List<Valve> Cons { get; set; }
         public List<VDist> Distance { get; set; }
-
         public bool IsOpen { get; set; }
         public int Mark { get; set; }
         public bool Visited { get; set; }
@@ -452,34 +289,17 @@ namespace D16
                 }
             }
         }
-        public void Open()
-        {
-            IsOpen = true;
-        }
-        public static void ResetAll()
-        {
-            foreach(Valve v in ValveList)
-            {
-                if (!v.wasSolved)
-                {
-                    v.IsOpen = false;
-                }               
-            }
-        }
-        public static void HardReset()
-        {
-            foreach (Valve v in ValveList)
-            {
-                    v.IsOpen = false;
-            }
-        }
         public static void ResetDist()
         {
-            foreach(Valve v in ValveList)
+            foreach (Valve v in ValveList)
             {
                 v.Mark = 0;
                 v.Visited = false;
             }
+        }
+        public void Open()
+        {
+            IsOpen = true;
         }
         public static bool Exists(string s)
         {
@@ -500,6 +320,17 @@ namespace D16
             }
             Console.WriteLine("You shouldn't see this.");
             return new Valve("NULL");
+        }
+        public int DistanceTo(Valve other)
+        {
+            foreach(VDist v in Distance)
+            {
+                if(v.Name == other.ID)
+                {
+                    return v.Dist;
+                }
+            }
+            return -1;
         }
         public override string ToString()
         {
