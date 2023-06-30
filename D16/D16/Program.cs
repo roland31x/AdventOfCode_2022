@@ -66,36 +66,6 @@ namespace D16
 
         }
     }
-    class Average
-    {
-        public string ID { get; set; }
-        public int Val { get; set; }
-
-        public Average(string s, int i)
-        {
-            ID = s;
-            Val = i;
-        }
-        public override string ToString()
-        {
-            return $"AVG: {ID} = {Val}";
-        }
-    }
-    class Potential
-    {
-        public string ID { get; set; }
-        public int Val { get; set; }
-
-        public Potential(string s, int i) 
-        {
-            ID = s;
-            Val = i;
-        }
-        public override string ToString()
-        {
-            return $"P: {ID} = {Val}";
-        }
-    }
     class Driver 
     { 
         public Valve current { get; set; }
