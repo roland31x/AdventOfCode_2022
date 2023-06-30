@@ -102,22 +102,13 @@ namespace D17
                     int[] poss = Possible[i];
                     long max = 1_000_000_000_000;
                     long left = max - poss[0];
-
-                    //long amountofcycles = left / (poss[1] - poss[0]);
-                    //long amountmoretofall = max - left;
-                    if (left % (poss[1] - poss[0]) == 0)
+                    if (left % (poss[1] - poss[0]) == 0) // need to check cycles that will finish exactly on the 1 trillionth rock, otherwise calculations are off
                     {
                         //Console.WriteLine(poss[0] + "->" + poss[1]);
                         long res = Heights[poss[0]] + (left / (poss[1] - poss[0])) * (diffs[i]);
                         Console.WriteLine(res - 1);
                         results.Add(res - 1); // for some reason it yields a value of + 1 always.
                     }
-                    //else
-                    //{
-                    //    Console.WriteLine(poss[0] + "! ->" + poss[1]);
-                    //    long res1 = amountofcycles * diffs[i] + Heights[poss[0] + int.Parse(amountmoretofall.ToString())];
-                    //    Console.WriteLine(res1);
-                    //}
                 }
             }           
         }
