@@ -1,4 +1,6 @@
-﻿namespace D18
+﻿using System.ComponentModel.Design;
+
+namespace D18
 {
     internal class Program
     {
@@ -6,7 +8,7 @@
         {
             List<Cube> Cubes = new List<Cube>();
             StreamReader sr = new StreamReader(@"..\..\..\input.txt");
-            int[,,] map = new int[22,22,22];
+            int[,,] map = new int[24,24,24];
             while (!sr.EndOfStream)
             {
                 string[] tokens = sr.ReadLine().Split(",");
@@ -48,6 +50,7 @@
         }
         public static void SolveList(List<Cube> Cubes, int[,,] map)
         {
+            DFS(0, 0, 0, map);
             for (int i = 0; i < Cubes.Count; i++)
             {
                 Cube Left = new Cube(Cubes[i].x - 1, Cubes[i].y, Cubes[i].z);
@@ -78,17 +81,14 @@
                                 Console.WriteLine("error");
                             }
                         }
-                        else
+                        if (map[n.x, n.y, n.z] <= 1)
                         {
-                            if (!TryEscape(n, Cubes, map))
+                            Cubes[i].VisibleSides--;
+                            if (Cubes[i].VisibleSides < 0)
                             {
-                                Cubes[i].VisibleSides--;
-                                if (Cubes[i].VisibleSides < 0)
-                                {
-                                    Console.WriteLine("error");
-                                }
+                                Console.WriteLine("error");
                             }
-                        }                    
+                        }
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -96,48 +96,22 @@
                     }                  
                 }
             }
+               
 
         }
-        public static bool TryEscape(Cube air, List<Cube> Cubes, int[,,] map)
+        public static void DFS(int x, int y, int z, int[,,] map)
         {
-            if (air.x > 21 || air.x < 0 || air.y > 21 || air.y < 0 || air.z > 21 || air.z < 0)
-                return true;
-            if (map[air.x, air.y, air.z] == 1)
-            {
-                return false;
-            }
-            if (map[air.x, air.y, air.z] == -2)
-            {
-                return false;
-            }
-            else if (map[air.x, air.y, air.z] == -1)
-            {
-                return true;
-            }
-
-            map[air.x, air.y, air.z] = -2;
-
-            Cube Left = new Cube(air.x - 1, air.y, air.z);
-            Cube Right = new Cube(air.x + 1, air.y, air.z);
-            Cube Top = new Cube(air.x, air.y + 1, air.z);
-            Cube Bottom = new Cube(air.x, air.y - 1, air.z);
-            Cube Behind = new Cube(air.x, air.y, air.z - 1);
-            Cube InFront = new Cube(air.x, air.y, air.z - 1);
-            List<Cube> Neighbors = new List<Cube>()
-            {
-                Left,Top,Right,Behind,InFront,Bottom,
-            };
-            bool escape = false;
-            foreach (Cube n in Neighbors)
-            {
-                escape = escape || TryEscape(n, Cubes, map);
-                if(escape)
-                {
-                    map[air.x, air.y, air.z] = -1;
-                    break;
-                }
-            }
-            return escape;
-        }
+            if (x > 23 || x < 0 || y < 0 || y > 23 || z < 0 || z > 23)
+                return;
+            if (map[x, y, z] >= 1)
+                return;
+            map[x, y, z] = 2;
+            DFS(x + 1, y, z, map);
+            DFS(x - 1, y, z, map);
+            DFS(x, y + 1, z, map);
+            DFS(x, y - 1, z, map);
+            DFS(x, y, z + 1, map);
+            DFS(x, y, z - 1, map);
+        }        
     }
 }
