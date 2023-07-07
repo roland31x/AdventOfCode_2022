@@ -19,52 +19,33 @@
             int quality = 0;
             foreach(Blueprint blueprint in blueprints)
             {
-                blueprint.CalcScore();
-                quality += blueprint.Score;
+                blueprint.Solve(24);
+                quality += blueprint.Score * blueprint.ID;
             }
             Console.WriteLine("Part 1 solution:");
             Console.WriteLine(quality);
 
-            //int part2 = 1;
-            //for(int i = 0; i < 3; i++)
-            //{
-            //    blueprints[i].CalcScorePart2();
-            //    part2 *= blueprints[i].Score2;
-            //}
-            //Console.WriteLine("Part 2 solution:");
-            //Console.WriteLine(part2);
+            int part2 = 1;
+            for (int i = 0; i < 3; i++)
+            {
+                blueprints[i].Solve(32);
+                part2 *= blueprints[i].Score;
+            }
+            Console.WriteLine("Part 2 solution:");
+            Console.WriteLine(part2);
         }
-    }
-    public class Step
-    {
-        public int[] ores = new int[4];
-        public int[] robots = new int[4];
-        public int minute;
-        public Step(int min, int[] ores, int[] robots)
-        {
-            minute = min;
-            this.ores = ores;
-            this.robots = robots;
-        }
-
-
     }
     public class Blueprint
     {
-        int ID;
-        public static int AlreadyGeodeRobots = 0;
+        public int ID { get; }
         public int Score { get; private set; }
-        public int Score2 { get; private set; }
-        Queue<int[,]> Possibilities = new Queue<int[,]>();
-        // ore,clay,obs,geode
-        //row 1 is robots
-        //row 2 is amount
 
         int OreCost; 
         int ClayCost;
         int[] ObsidianCost = new int[2]; // ore || clay
         int[] GeodeCost = new int[2]; // ore || obsidian
         List<int[]> robotcosts;
+        int[] max = new int[4];
 
         public Blueprint(int id, string toParse) 
         {
@@ -77,195 +58,171 @@
             GeodeCost[0] = int.Parse(tokens[27]);
             GeodeCost[1] = int.Parse(tokens[30]);
             robotcosts = new List<int[]>() { new int[] { OreCost, 0, 0, 0 }, new int[] { ClayCost, 0, 0, 0 }, new int[] { ObsidianCost[0], ObsidianCost[1], 0, 0 }, new int[] { GeodeCost[0], 0, GeodeCost[1], 0 } };
+            max[0] = OreCost;
+            if (ClayCost > max[0])
+                max[0] = ClayCost;
+            if (ObsidianCost[0] > max[0])
+                max[0] = ObsidianCost[0];
+            if (GeodeCost[0] > max[0])
+                max[0] = GeodeCost[0];
+            max[1] = ObsidianCost[1];
+            max[2] = GeodeCost[1];
         }
-        public void CalcScorePart2()
+        public void Solve(int maxmin)
         {
-            int[,] Ores = new int[4, 4];
-            Ores[0, 0] = 1; // we start with 1 ore robot
-            Ores[3, 0] = 1; // minute;
-            Possibilities.Enqueue(Ores);
-
-            int maxval = 0;
-            while (Possibilities.Count > 0)
+            int max = 0;
+            DFS(1, 0, 0, 0, new int[4], 1, 1, -1, ref max, maxmin);
+            Score = max;
+        }
+        void DFS(int oreR, int clayR, int obsR, int geodeR, int[] pastores, int min, int passedmin, int robotbuilt, ref int max, int maxmin)
+        {
+            if (min > maxmin)
             {
-                int[,] deq = Possibilities.Dequeue();
+                return;
+            }         
 
-                
+            int[] ores = new int[4];
 
-                if (deq[3, 0] > 32)
+            ores[0] += oreR * passedmin;
+            ores[0] += pastores[0];
+            ores[1] += clayR * passedmin;
+            ores[1] += pastores[1];
+            ores[2] += obsR * passedmin;
+            ores[2] += pastores[2];
+            ores[3] += geodeR * passedmin;
+            ores[3] += pastores[3];
+
+            if(robotbuilt != -1)
+            {
+                for(int i = 0; i < 4; i++)
                 {
-                    if (deq[1, 3] > maxval)
-                        maxval = deq[1, 3];
-                    continue;
+                    ores[i] -= robotcosts[robotbuilt][i];
                 }
-                if (deq[3, 0] == 32)
-                {
-                    AddRobotWorkload(deq);
-                    deq[3, 0]++;
-
-                    Possibilities.Enqueue(deq);
-                    continue;
-                }
-                if (deq[3, 0] == 31)
-                {
-                    TryBuyRobot(deq, Possibilities, 3);
-
-                    AddRobotWorkload(deq);
-                    deq[3, 0]++;
-
-                    Possibilities.Enqueue(deq);
-                    continue;
-                }
-                for (int i = 3; i >= 0; i--)
-                {
-                    TryBuyRobot(deq, Possibilities, i);
-                    //deq[2, i] = 0;
-                }
-
-                AddRobotWorkload(deq);
-                deq[3, 0]++;
-
-                Possibilities.Enqueue(deq);
+                ores[robotbuilt] -= passedmin;
             }
 
+            int[] robots = new int[4];
+            robots[0] = oreR;
+            robots[1] = clayR;
+            robots[2] = obsR;
+            robots[3] = geodeR;
 
-            Score2 = maxval;
-        }
-        public void CalcScore()
-        {
-            int[,] Ores = new int[4, 4];
-            Ores[0, 0] = 1; // we start with 1 ore robot
-            Ores[3, 0] = 1; // minute;
-            Possibilities.Enqueue(Ores);
+            int nextOre = MinCalc(robots, ores, 0);
+            int nextClay = MinCalc(robots, ores, 1);
+            int nextObs = MinCalc(robots, ores, 2);
+            int nextGeode = MinCalc(robots, ores, 3);
 
-            int maxval = 0;
-            while(Possibilities.Count > 0)
+            DFS(oreR + 1, clayR, obsR, geodeR, ores, min + nextOre, nextOre, 0, ref max, maxmin);
+            DFS(oreR, clayR + 1, obsR, geodeR, ores, min + nextClay, nextClay, 1, ref max, maxmin);
+            DFS(oreR, clayR, obsR + 1, geodeR, ores, min + nextObs, nextObs, 2, ref max, maxmin);
+            DFS(oreR, clayR, obsR, geodeR + 1, ores, min + nextGeode, nextGeode, 3, ref max, maxmin);
+
+            while (min < maxmin)
             {
-                int[,] deq = Possibilities.Dequeue();
-                
-                if (deq[3,0] > 24)
-                {
-                    if (deq[1,3] > maxval)
-                        maxval = deq[1,3];
-                    continue;
-                }
-                if (deq[3, 0] == 24)
-                {
-                    AddRobotWorkload(deq);
-                    deq[3, 0]++;
-
-                    Possibilities.Enqueue(deq);
-                    continue;
-                }
-                if (deq[3, 0] == 23)
-                {
-                    TryBuyRobot(deq, Possibilities, 3);
-
-                    AddRobotWorkload(deq);
-                    deq[3, 0]++;
-
-                    Possibilities.Enqueue(deq);
-                    continue;
-                }
-
-                for (int i = 3; i >= 0; i--)
-                { 
-                    TryBuyRobot(deq, Possibilities, i);
-                }
-
-                AddRobotWorkload(deq);
-                deq[3, 0]++;
-                
-
-                Possibilities.Enqueue(deq);
+                ores[0] += oreR;
+                ores[1] += clayR;
+                ores[2] += obsR;
+                ores[3] += geodeR;
+                min++;
+            }
+            if (ores[3] > max)
+            {
+                max = ores[3];
             }
 
-
-            Score = maxval * ID;
         }
-
-        public void AddRobotWorkload(int[,] possibility)
+        int MinCalc(int[] robots, int[] ores, int robottype)
         {
+            switch (robottype)
+            {
+                case 0:
+                    return NextOreRobot(robots, ores);
+                case 1:
+                    return NextClayRobot(robots, ores);
+                case 2:
+                    return NextObsRobot(robots, ores);
+                case 3:
+                    return NextGeodeRobot(robots, ores);
+            }
+            return 0;
+        }
+        int NextOreRobot(int[] robots, int[] ores)
+        {
+            if (robots[0] >= max[0])
+                return 60;
+            int[] simores = new int[4];
             for(int i = 0; i < 4; i++)
             {
-                possibility[1, i] += possibility[0, i];
+                simores[i] = ores[i];
             }
+            int min = 0;
+            while (simores[0] < robotcosts[0][0] && min < 40)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    simores[i] += robots[i];
+                }
+                min++;
+            }
+            return min + 1;
         }
-        private bool TryBuyRobot(int[,] possibility, Queue<int[,]> queue, int robot)
+        int NextClayRobot(int[] robots, int[] ores)
         {
-            for(int j = 0; j < 4; j++)
-            {
-                if (possibility[1, j] < robotcosts[robot][j])
-                    return false;
-            }
-
-            int ok = 0;
-            for (int j = 0; j < 4; j++)
-            {
-                if (possibility[1, j] - robotcosts[robot][j] >= robotcosts[robot][j])
-                {
-                    ok++;
-                }
-            }
-            if (ok == 4)
-            {
-                return false;
-            }
-
-            //if (robot == 2)
-            //{
-            //    int x = 10;
-            //}
-            if (robot == 3)
-            {
-                if (possibility[0,1] == 7 && possibility[0, 2] == 3)
-                {
-                    int x = 10;
-                }
-                    
-            }
-
-            int[,] newpossibility = new int[4, 4];
-
+            if (robots[1] >= max[1])
+                return 60;
+            int[] simores = new int[4];
             for (int i = 0; i < 4; i++)
             {
-                for (int j = 0; j < 4; j++)
-                {
-                    newpossibility[i, j] = possibility[i, j];
-                }
+                simores[i] = ores[i];
             }
-
-            AddRobotWorkload(newpossibility);
-
-            for (int j = 0; j < 4; j++)
+            int min = 0;
+            while (simores[0] < robotcosts[1][0] && min < 40)
             {
-                newpossibility[1, j] -= robotcosts[robot][j];
+                for (int i = 0; i < 4; i++)
+                {
+                    simores[i] += robots[i];
+                }
+                min++;
             }
-            newpossibility[0, robot] += 1;
-
-            newpossibility[3, 0]++;
-
-            //foreach (int[,] pos2 in queue)
-            //{
-            //    //int ok = 0;
-            //    //for(int i = 0; i < 2; i++)
-            //    //{
-            //    //    for (int j = 0; j < 4; j++)
-            //    //    {
-            //    //        if (newpossibility[i, j] == pos2[i, j])
-            //    //            ok++;
-            //    //    }
-            //    //}
-            //    //if(ok == 8)
-            //    //{
-            //    //    return false;
-            //    //}
-            //}
-
-
-            queue.Enqueue(newpossibility);
-
-            return true;
-        }       
+            return min + 1;
+        }
+        int NextObsRobot(int[] robots, int[] ores)
+        {
+            if (robots[2] >= max[2])
+                return 60;
+            int[] simores = new int[4];
+            for (int i = 0; i < 4; i++)
+            {
+                simores[i] = ores[i];
+            }
+            int min = 0;
+            while ( ( simores[0] < robotcosts[2][0] || simores[1] < robotcosts[2][1] ) && min < 40)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    simores[i] += robots[i];
+                }
+                min++;
+            }
+            return min + 1;
+        }
+        int NextGeodeRobot(int[] robots, int[] ores)
+        {
+            int[] simores = new int[4];
+            for (int i = 0; i < 4; i++)
+            {
+                simores[i] = ores[i];
+            }
+            int min = 0;
+            while ( ( simores[0] < robotcosts[3][0] || simores[2] < robotcosts[3][2] ) && min < 40)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    simores[i] += robots[i];
+                }
+                min++;
+            }
+            return min + 1;
+        }
     }
 }
