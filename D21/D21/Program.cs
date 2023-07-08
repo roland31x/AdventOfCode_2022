@@ -29,8 +29,8 @@ namespace D21
     }
     public class UnknownVal
     {
-        public decimal KnownValue = 0;
-        public decimal Unknown = 0;
+        public decimal KnownValue = 0; // a 
+        public decimal Unknown = 0; // b * x
         public UnknownVal(decimal Kvalue, decimal Uvalue)
         {
             KnownValue = Kvalue;
