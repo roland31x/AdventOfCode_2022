@@ -75,6 +75,7 @@ namespace D21
                 if(right.Unknown != 0)
                 {
                     Console.WriteLine("fuck");
+                    // this should never happen, evaluating 1/x is pain
                     toret.Unknown = right.Unknown;
                 }
                 toret.KnownValue = left.KnownValue / right.KnownValue;
@@ -114,6 +115,9 @@ namespace D21
             human.Operation = "failed";
             UnknownVal left = FindMonkey(rootop[0]).Yell2();
             UnknownVal right = FindMonkey(rootop[2]).Yell2();
+
+            // end up in an experssion of type a + bx = c
+
             decimal result = 0;
             if (left.Unknown == 0)
             {
@@ -123,8 +127,6 @@ namespace D21
             {
                 result = (right.KnownValue - left.KnownValue) / left.Unknown;
             }
-
-
 
             return result;
         }
