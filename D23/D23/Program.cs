@@ -13,7 +13,6 @@ namespace D23
             {               
                 myMap.Round();
             }
-            //myMap.Show();
             Console.WriteLine("Part 1 solution:");
             Console.WriteLine(myMap.Score());
             int round = 10;
