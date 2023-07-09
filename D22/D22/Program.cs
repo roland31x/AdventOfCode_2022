@@ -19,11 +19,87 @@ namespace D22
                 }
             }
 
-            Player player = new Player(0, start, 0, myMap);     
-           
+            Node nstart = new Node(myMap.map[0][start], 0, start);
+
+            Player player1 = new Player(0, start, 0, myMap);
+            NodePlayer player2 = new NodePlayer(nstart, myMap.Path);
+
             Console.WriteLine("Part1 solution");
-            Console.WriteLine(player.Part1());
-            
+            Console.WriteLine(player1.Part1());
+            Console.WriteLine("Part2 solution");
+            Console.WriteLine(player2.Part2());
+
+        }
+    }
+    public class NodePlayer
+    {
+        Node current;
+        List<Pathing> Path;
+        int dir = 0;
+        public NodePlayer(Node node, List<Pathing> path)
+        {
+            current = node;
+            Path = path;
+        }
+        void ChangeDir(string direction)
+        {
+            if (direction == "R")
+            {
+                if (dir + 1 > 3)
+                    dir = 0;
+                else
+                    dir++;
+            }
+            else
+            {
+                if (dir - 1 < 0)
+                    dir = 3;
+                else
+                    dir--;
+            }
+        }
+        public int Part2()
+        {
+            foreach(Pathing p in Path)
+            {
+                if(p.turn == null)
+                {
+                    int times = (int)p.times;
+                    int x = 0;
+                    while(x < times && current.neighbors[dir].Val == 0)
+                    {
+                        current = current.neighbors[dir];
+                        x++;
+                    }
+                }
+                else
+                {
+                    ChangeDir(p.turn);
+                }
+            }
+
+
+
+            int Score = current.mapI * 1000 + current.mapJ * 4 + dir;
+            return Score;
+        }
+    }
+    public class NodeMap
+    {
+        List<Node> nodes = new List<Node>();
+
+    }
+    public class Node
+    {
+        public Node[] neighbors = new Node[4]; // 0 - right, 1 - down, 2 - left, 3 - up
+        public int Val { get; }
+        public int mapI { get; }
+        public int mapJ { get; }
+        public Node(int value, int mapI, int mapJ)
+        {
+            Val = value;
+            this.mapJ = mapJ;
+            this.mapI = mapI;
         }
     }
     public class Player
