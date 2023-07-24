@@ -11,7 +11,8 @@ namespace D4
     {
         static void Main(string[] args)
         {
-            int Sum = 0;
+            int Sum1 = 0;
+            int Sum2 = 0;
 
             using (StreamReader sr = new StreamReader("input.txt"))
             {
@@ -32,41 +33,24 @@ namespace D4
                         Elf1[i] = int.Parse(firstElf[i]);
                         Elf2[i] = int.Parse(secondElf[i]);
                     }
-                    /* PART1
+
                     if (Elf1[0] <= Elf2[0] && Elf1[1] >= Elf2[1])
-                    {
-                        Sum++;
-                        continue;
-                    }
-                    if (Elf1[0] >= Elf2[0] && Elf1[1] <= Elf2[1])
-                    {
-                        Sum++;
-                        continue;
-                    }
-                    */
+                        Sum1++;
+                    else if (Elf1[0] >= Elf2[0] && Elf1[1] <= Elf2[1])
+                        Sum1++;
+
                     if (Elf1[0] <= Elf2[0])
-                    {
                         if (Elf1[1] - Elf2[0] >= 0)
-                        {
-                            Sum++;
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
+                            Sum2++;
                     if (Elf1[0] > Elf2[0])
-                    {
                         if (Elf2[1] - Elf1[0] >= 0)
-                        {
-                            Sum++;
-                            continue;
-                        }
-                        else
-                            continue;
-                    }
+                            Sum2++;
                 }
             }
-            Console.WriteLine(Sum);
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(Sum1);
+            Console.WriteLine("Part 2 solution:");
+            Console.WriteLine(Sum2);
         }
     }
 }
