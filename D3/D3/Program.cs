@@ -12,49 +12,56 @@ namespace D3
         static void Main(string[] args)
         {
             int Sum = 0;
-            
+
             using (StreamReader sr = new StreamReader("input.txt"))
             {
                 while (true)
                 {
-                    // PART 1 FROM HERE
-                    //List<char> comp1 = new List<char>();
-                    //List<char> comp2 = new List<char>();
-                    //string s = sr.ReadLine();
-                    //if (s == null)
-                    //{
-                    //    break;
-                    //}
-                    //char[] chars = s.ToCharArray();
-                    //for (int i = 0; i < chars.Length / 2; i++)
-                    //{
-                    //    comp1.Add(chars[i]);
-                    //}
-                    //for (int j = chars.Length / 2; j < chars.Length; j++)
-                    //{
-                    //    comp2.Add(chars[j]);
-                    //}
-                    //bool found = false;
-                    //for (int i = 0; i < comp1.Count; i++)
-                    //{
-                    //    for (int j = 0; j < comp2.Count; j++)
-                    //    {
-                    //        if (comp1[i] == comp2[j])
-                    //        {
-                    //            if (comp1[i] - '@' <= 27)
-                    //            {
-                    //                Sum += (comp1[i] - '@') + 26;
-                    //            }
-                    //            else Sum += comp1[i] - '`';
-                    //            found = true;
-                    //            break;
-                    //        }
-                    //    }
-                    //    if (found) break;
-                    //}
-                    // PART 1 UNTIL HERE
+                    List<char> comp1 = new List<char>();
+                    List<char> comp2 = new List<char>();
+                    string s = sr.ReadLine();
+                    if (s == null)
+                    {
+                        break;
+                    }
+                    char[] chars = s.ToCharArray();
+                    for (int i = 0; i < chars.Length / 2; i++)
+                    {
+                        comp1.Add(chars[i]);
+                    }
+                    for (int j = chars.Length / 2; j < chars.Length; j++)
+                    {
+                        comp2.Add(chars[j]);
+                    }
+                    bool found = false;
+                    for (int i = 0; i < comp1.Count; i++)
+                    {
+                        for (int j = 0; j < comp2.Count; j++)
+                        {
+                            if (comp1[i] == comp2[j])
+                            {
+                                if (comp1[i] - '@' <= 27)
+                                {
+                                    Sum += (comp1[i] - '@') + 26;
+                                }
+                                else Sum += comp1[i] - '`';
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) break;
+                    }
+                } 
+            }
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(Sum);
 
-                    // PART 2 FROM HERE
+            Sum = 0;
+
+            using (StreamReader sr = new StreamReader("input.txt"))
+            {
+                while (true)
+                {
                     List<List<char>> Group = new List<List<char>>
                     {
                         new List<char>(),
@@ -103,9 +110,9 @@ namespace D3
                         }
                         if (found) break;
                     }
-                    //
                 }
             }
+            Console.WriteLine("Part 2 solution:");
             Console.WriteLine(Sum);
         }
     }
