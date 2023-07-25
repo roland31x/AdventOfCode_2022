@@ -1,7 +1,7 @@
-# AdventOfCode_2022
+# Advent Of Code 2022
 
-My own solutions in c# for the problems in this years advent of code event.
+My own solutions in C# ConsoleApp for the problems in this years advent of code event.
 
-// solutions for the first star can be found either commented or with instruction comments.
+// apart from day 22 where part 2 was hardcoded for my own input, other days should work with any input
 
-// Yet to complete all of them
+// Each day should display both part 1 and part 2 solution
