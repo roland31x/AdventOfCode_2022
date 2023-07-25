@@ -11,9 +11,7 @@ namespace D8
     internal class Program
     {
         static void Main(string[] args)
-        {
-            // this code will display both answers without the need to change anything
-            
+        {            
             List<List<Tree>> list = new List<List<Tree>>();
 
             using (StreamReader sr = new StreamReader("input.txt"))

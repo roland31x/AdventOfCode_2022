@@ -53,11 +53,11 @@ namespace D17
                 SpawnRock(new Rock(i % 5));
                 if(i == 2021) // aka 2022 rocks have fallen
                 {
-                    Console.WriteLine("Day 1 Solution: " + Highest.Y);
+                    Console.WriteLine("Part 1 Solution: " + Highest.Y);
                 }
                 Heights.Add(Highest.Y);
             }
-            Console.WriteLine("Possible Solutions for Day 2: ");
+            Console.WriteLine("Possible Solutions for Part 2: ");
             Analyze(Heights);
         }
         public void Analyze(List<int> Heights)

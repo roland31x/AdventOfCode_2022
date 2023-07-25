@@ -35,8 +35,10 @@ namespace D10
                 }
             }
             Console.WriteLine();
+
             Console.WriteLine("Answer for Part 1: ");
             Console.Write(Sum);
+
             Console.WriteLine();
         }
         public static void Cycle(ref int cycle)

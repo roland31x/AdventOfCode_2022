@@ -15,10 +15,9 @@ namespace D13
         static int sum = 1; // 0 for part 1 !!!!!
         static void Main(string[] args)
         {
-            List<ListConv> packets = new List<ListConv>();
+            sum = 0;
             using (StreamReader sr = new StreamReader("input.txt"))
-            {
-                /*
+            {              
                 ListConv left = new ListConv();
                 ListConv right = new ListConv();
                 Browser browser;
@@ -83,8 +82,15 @@ namespace D13
                         line++;
                     }
                 }
+                Console.WriteLine("Part 1 solution:");
                 Console.WriteLine(sum);  // UNTIL HERE FOR PART 1
-                */
+            }
+
+            sum = 1;
+
+            List<ListConv> packets = new List<ListConv>();
+            using (StreamReader sr = new StreamReader("input.txt"))
+            {
                 while (!sr.EndOfStream)
                 {
                     ListConv toAddlist = new ListConv();
@@ -139,6 +145,7 @@ namespace D13
                         sum *= i + 1;
                     }
                 }
+                Console.WriteLine("Part 2 solution:");
                 Console.WriteLine(sum);
             }
         }

@@ -11,7 +11,6 @@ namespace D7
     {
         static void Main(string[] args)
         {
-            // THIS PROGRAM WILL DISPLAY THE ANSWERS FOR BOTH PARTS WITHOUT HAVING TO COMMENT / UNCOMMENT LINES
             
             Folder MainFolder = new Folder("Main");
             CurrentFolder Current = new CurrentFolder(MainFolder);
@@ -87,7 +86,7 @@ namespace D7
                 CheckBigP2(MainFolder, OK, spaceneeded, offset);
                 offset *= 10;
             }
-            Console.Write("Part 2 answer: ");
+            Console.Write("Part 2 answer : ");
             foreach(Folder f in OK)
             {
                 Console.Write(f.GetSize());

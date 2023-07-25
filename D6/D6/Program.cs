@@ -11,29 +11,42 @@ namespace D6
     {
         static void Main(string[] args)
         {
-            int count = 0;
+            int count;
 
             using (StreamReader sr = new StreamReader("input.txt"))
             {
                 string s = sr.ReadToEnd();
                 char[] chars = s.ToCharArray();
-                for(int i = 0; i < chars.Length; i++)
-                {
-                    SortedSet<char> set = new SortedSet<char>();
-                    set.Add(chars[i]);
-                    for (int j = i + 1; j < i + 14; j++)    // PART 1 j goes to i + 4
-                    {
-                        set.Add(chars[j]);
-                    }
-                    if (set.Count == 14)    // PART 1  set.Count == 4
-                    {
-                        count = i + 14;   // PART 1  count = i + 4;
-                        break;
-                    }
-                }
-                
+                count = FirstDiffOfAmount(4, chars);
             }
+            Console.WriteLine("Part 1 solution:");
             Console.WriteLine(count);
+
+            using (StreamReader sr = new StreamReader("input.txt"))
+            {
+                string s = sr.ReadToEnd();
+                char[] chars = s.ToCharArray();
+                count = FirstDiffOfAmount(14, chars);
+            }
+            Console.WriteLine("Part 2 solution:");
+            Console.WriteLine(count);
+        }
+        static int FirstDiffOfAmount(int amount, char[] chars)
+        {
+            for (int i = 0; i < chars.Length; i++)
+            {
+                SortedSet<char> set = new SortedSet<char>();
+                set.Add(chars[i]);
+                for (int j = i + 1; j < i + amount; j++)    
+                {
+                    set.Add(chars[j]);
+                }
+                if (set.Count == amount)    
+                {
+                    return i + amount;   
+                }
+            }
+            return -1;
         }
     }
 }

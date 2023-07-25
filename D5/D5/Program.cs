@@ -64,28 +64,85 @@ namespace D5
                     }
                 }
 
-                // FROM HERE FOR PART 1 
+                sr.ReadLine();
 
-                //while (true)
-                //{
-                //    string s = sr.ReadLine();
-                //    if (s == null)
-                //    {
-                //        break;
-                //    }
-                //    string[] tokens = s.Split(' ');
-                //    int[] commands = new int[3];
-                //    commands[0] = int.Parse(tokens[1]);
-                //    commands[1] = int.Parse(tokens[3]);
-                //    commands[2] = int.Parse(tokens[5]);
-                //    while (commands[0] > 0)
-                //    {
-                //        Containers[commands[2]].Push(Containers[commands[1]].Pop());
-                //        commands[0]--;
-                //    }
-                //}
+                while (true)
+                {
+                    string s = sr.ReadLine();
+                    if (s == null)
+                    {
+                        break;
+                    }
+                    string[] tokens = s.Split(' ');
+                    int[] commands = new int[3];
+                    commands[0] = int.Parse(tokens[1]);
+                    commands[1] = int.Parse(tokens[3]);
+                    commands[2] = int.Parse(tokens[5]);
+                    while (commands[0] > 0)
+                    {
+                        Containers[commands[2]].Push(Containers[commands[1]].Pop());
+                        commands[0]--;
+                    }
+                }
+            }
+            StringBuilder str = new StringBuilder();
+            for(int i = 1; i < Containers.Count; i++)
+            {
+                str.Append(Containers[i].Pop());
+            }
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(str.ToString());
 
-                // UNTIL HERE FOR PART 1, FROM HERE FOR PART 2 // COMMENT ONE PART AND DE-COMMENT THE OTHER DEPENDING ON WHICH PART U WANT
+            Containers = new List<Stack<char>>
+            {
+                new Stack<char>(), // 0 
+                new Stack<char>(), // 1
+                new Stack<char>(), // 2
+                new Stack<char>(), // 3
+                new Stack<char>(), // 4
+                new Stack<char>(), // 5
+                new Stack<char>(), // 6
+                new Stack<char>(), // 7
+                new Stack<char>(), // 8
+                new Stack<char>()  // 9
+            };
+
+
+            using (StreamReader sr = new StreamReader("input.txt"))
+            {
+                while (true)
+                {
+                    string p = sr.ReadLine();
+                    if (p == string.Empty || char.IsNumber(p[1]))
+                    {
+                        break;
+                    }
+                    char[] items = p.ToCharArray();
+                    for (int i = 1, j = 1; i < items.Length; i += 4, j++)
+                    {
+                        if (!char.IsWhiteSpace(items[i]))
+                        {
+                            Containers[j].Push(items[i]);
+                        }
+                    }
+                }
+                for (int i = 0; i < Containers.Count; i++)
+                {
+                    Stack<char> temp = new Stack<char>();
+                    Stack<char> temp2 = new Stack<char>();
+                    while (Containers[i].Count > 0)
+                    {
+                        temp.Push(Containers[i].Pop());
+                    }
+                    while (temp.Count > 0)
+                    {
+                        temp2.Push(temp.Pop());
+                    }
+                    while (temp2.Count > 0)
+                    {
+                        Containers[i].Push(temp2.Pop());
+                    }
+                }
 
                 while (!sr.EndOfStream)
                 {
@@ -101,7 +158,7 @@ namespace D5
                     commands[2] = int.Parse(tokens[5]);
                     while (commands[0] > 0)
                     {
-                        Containers[0].Push(Containers[commands[1]].Pop());                        
+                        Containers[0].Push(Containers[commands[1]].Pop());
                         commands[0]--;
                     }
                     while (Containers[0].Count > 0)
@@ -109,15 +166,16 @@ namespace D5
                         Containers[commands[2]].Push(Containers[0].Pop());
                     }
                 }
-
-                // UNTIL HERE FOR PART 2
             }
-            StringBuilder str = new StringBuilder();
-            for(int i = 1; i < Containers.Count; i++)
+            str = new StringBuilder();
+            for (int i = 1; i < Containers.Count; i++)
             {
                 str.Append(Containers[i].Pop());
             }
+            Console.WriteLine("Part 2 solution:");
             Console.WriteLine(str.ToString());
+
+           
         }
     }
 }

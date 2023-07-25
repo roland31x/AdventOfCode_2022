@@ -14,8 +14,6 @@ namespace D11
     {
         static void Main(string[] args)
         {
-            // TO SWITCH BETWEEN PART 1 AND PART 2 ANSWERS CHECK COMMENTS AT LINES: 64 , 145
-
             MonkeyList monkeys = new MonkeyList();
 
             using (StreamReader sr = new StreamReader("input.txt"))
@@ -24,10 +22,10 @@ namespace D11
                 while (!sr.EndOfStream)
                 {
                     Monkey monke = new Monkey();
-                    for(int k = 0; k < 7; k++)
+                    for (int k = 0; k < 7; k++)
                     {
                         string s = sr.ReadLine();
-                        if(s == string.Empty || s == null)
+                        if (s == string.Empty || s == null)
                         {
                             break;
                         }
@@ -58,12 +56,12 @@ namespace D11
                             monke.ThrowTo[1] = (int.Parse(tokens[5]));
                         }
                     }
-                    monkeys.Add(monke);                                
+                    monkeys.Add(monke);
                 }
             }
-            for(int i = 1; i <= 10000; i++)  // USE i <= 20 for part 1
+            for (int i = 1; i <= 20; i++)
             {
-                foreach(Monkey monke in monkeys.monkeyList)
+                foreach (Monkey monke in monkeys.monkeyList)
                 {
                     monke.Operate(monkeys);
                 }
@@ -74,17 +72,87 @@ namespace D11
                 Activities.Add(monke.Activity);
             }
             ulong sum = 1;
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 sum *= Activities.Max();
                 Activities.Remove(Activities.Max());
             }
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(sum);
+
+            monkeys = new MonkeyList();
+            using (StreamReader sr = new StreamReader("input.txt"))
+            {
+                char[] sep = new char[] { ' ' };
+                while (!sr.EndOfStream)
+                {
+                    Monkey monke = new Monkey();
+                    for (int k = 0; k < 7; k++)
+                    {
+                        string s = sr.ReadLine();
+                        if (s == string.Empty || s == null)
+                        {
+                            break;
+                        }
+                        s = s.Replace(",", "");
+                        string[] tokens = s.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                        if (tokens[0] == "Starting")
+                        {
+                            for (int i = 2; i < tokens.Length; i++)
+                            {
+                                monke.items.Add(ulong.Parse(tokens[i]));
+                            }
+                        }
+                        if (tokens[0] == "Operation:")
+                        {
+                            Operation op = new Operation(tokens);
+                            monke.MonkeyOp = op;
+                        }
+                        if (tokens[0] == "Test:")
+                        {
+                            monke.DivTest = ulong.Parse(tokens[3]);
+                        }
+                        if (tokens[1] == "true:")
+                        {
+                            monke.ThrowTo[0] = (int.Parse(tokens[5]));
+                        }
+                        if (tokens[1] == "false:")
+                        {
+                            monke.ThrowTo[1] = (int.Parse(tokens[5]));
+                        }
+                    }
+                    monkeys.Add(monke);
+                }
+            }
+
+            MonkeyList.isP1 = false;
+
+            for (int i = 1; i <= 10000; i++)
+            {
+                foreach (Monkey monke in monkeys.monkeyList)
+                {
+                    monke.Operate(monkeys);
+                }
+            }
+            Activities = new List<ulong>();
+            foreach (Monkey monke in monkeys.monkeyList)
+            {
+                Activities.Add(monke.Activity);
+            }
+            sum = 1;
+            for (int i = 0; i < 2; i++)
+            {
+                sum *= Activities.Max();
+                Activities.Remove(Activities.Max());
+            }
+            Console.WriteLine("Part 2 solution:");
             Console.WriteLine(sum);
         }
     }
     class MonkeyList 
-    { 
-        public List<Monkey> monkeyList { get; set; }
+    {
+        public static bool isP1 = true;
+        public List<Monkey> monkeyList { get; set; }       
         public MonkeyList()
         {
             monkeyList = new List<Monkey>();
@@ -106,6 +174,7 @@ namespace D11
         public ulong DivTest { get; set; }
 
         public int[] ThrowTo { get; set; }
+
 
         public Monkey()
         {
@@ -142,7 +211,13 @@ namespace D11
                     {
                         items[0] = (items[0] % maxdiv) * (items[0] % maxdiv);
                     }
-                    // items[0] = items[0] / 3;  // UNCOMMENT THIS FOR PART 1 , COMMENT IT FOR PART 2
+
+                    if (isP1)
+                    {
+                        items[0] = items[0] / 3;
+                    }
+                    
+
                     DoTest(items[0], monks);
                 }
             }

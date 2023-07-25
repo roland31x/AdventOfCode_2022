@@ -12,10 +12,9 @@ namespace D9
     {
         static void Main(string[] args)
         {
-            // TO SWITCH BETWEEN PART 1 AND PART 2 CHECK COMMENTS FROM LINES 70 TO 110
 
-            int sum = 0;
-            Head thisHead = new Head();
+            Head thisHead = new Head(1);
+            Head thisHead2 = new Head(2);
             using (StreamReader sr = new StreamReader("input.txt"))
             {
                 while (!sr.EndOfStream)
@@ -25,10 +24,13 @@ namespace D9
                     char op = char.Parse(tokens[0]);
                     int times = int.Parse(tokens[1]);
                     thisHead.Move(op, times);
+                    thisHead2.Move(op, times);
                 }
             }
-            sum = thisHead.tails.Count;
-            Console.WriteLine(sum);
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(thisHead.tails.Count);
+            Console.WriteLine("Part 2 solution:");
+            Console.WriteLine(thisHead2.tails.Count);
         }
     }
     class Head
@@ -42,13 +44,15 @@ namespace D9
         public Tail myTail;          // has a single main tail ( has different movement compared to the other tails )
 
         public List<Tail> tails;   // STORES PAST TAIL POSITIONS
-        public Head()
+        int type;
+        public Head(int type)
         {
-            myTails = new List<Tail>() { new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this)};
+            myTails = new List<Tail>() { new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this), new Tail(this) };
             tails = new List<Tail>();
             myTail = myTails[0]; // referencing main tail as the first tail from the list of tails (lmao)
             posX = 0;
             posY = 0;
+            this.type = type;
         }
         public void Move(char op, int times)
         {
@@ -70,41 +74,41 @@ namespace D9
                         MoveDown();
                         break;
                 }
-                // TailCheck();  // USE THIS FOR PART 1
-                TailsCheck();  // USE THIS FOR PART 2
+                if(type == 1)
+                    TailCheck();
+                else
+                    TailsCheck();
                 times--;
                 bool OK = true;
                 foreach (Tail t in tails)
                 {
-                    //// USE THIS FOR PART 1
-
-                    //if (t.Check(myTail))
-                    //{
-                    //    OK = false;
-                    //    break;
-                    //}
-
-                    //// COMMENT THE PART BELOW FOR PART 1
-
-                    if (t.Check(myTails[8]))
+                    if(type == 1)
                     {
-                        OK = false;
-                        break;
+                        if (t.Check(myTail))
+                        {
+                            OK = false;
+                            break;
+                        }
                     }
-
-                    //// UNTIL HERE
+                    else
+                    {
+                        if (t.Check(myTails[8]))
+                        {
+                            OK = false;
+                            break;
+                        }
+                    }
                 }
                 if (OK)
                 {
-                    //// USE THIS FOR PART 1
-
-                    //tails.Add(new Tail(myTail.TailposX, myTail.TailposY));
-
-                    //// COMMENT THE PART BELOW FOR PART 1
-
-                    tails.Add(new Tail(myTails[8].TailposX, myTails[8].TailposY));
-
-                    //// UNTIL HERE
+                    if(type == 1)
+                    {
+                        tails.Add(new Tail(myTail.TailposX, myTail.TailposY));
+                    }
+                    else
+                    {
+                        tails.Add(new Tail(myTails[8].TailposX, myTails[8].TailposY));
+                    }
                 }
             }
         }

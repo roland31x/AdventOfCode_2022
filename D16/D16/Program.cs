@@ -59,9 +59,9 @@ namespace D16
             //firstRun.CalcDist();
             firstRun.CalcDist();
             firstRun.Reset();
-            Console.WriteLine("Part1:");
+            Console.WriteLine("Part 1 solution:");
             firstRun.SolveDay16Part1();
-            Console.WriteLine("Part2:");
+            Console.WriteLine("Part 2 solution:");
             firstRun.SolveDay16Part2();
 
         }

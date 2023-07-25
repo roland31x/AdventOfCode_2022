@@ -16,7 +16,7 @@ namespace D15
         static void Main(string[] args)
         {
             List<Sensor> sensors= new List<Sensor>();
-            //SortedSet<int> marks = new SortedSet<int>(); // FOR PART 1
+            SortedSet<int> marks = new SortedSet<int>(); // FOR PART 1
 
             List<int[]> ToCheck = new List<int[]>();
 
@@ -33,10 +33,10 @@ namespace D15
                         int y1 = int.Parse(match.Groups[2].Value);
                         int x2 = int.Parse(match.Groups[3].Value);
                         int y2 = int.Parse(match.Groups[4].Value);
-                        //if(y2 == LineCheck)
-                        //{
-                        //    marks.Add(x2);
-                        //}
+                        if (y2 == LineCheck)
+                        {
+                            marks.Add(x2);
+                        }
                         Sensor sns = new Sensor(new Beacon(y2,x2), y1 , x1);
                         sensors.Add(sns);
                     }
@@ -46,31 +46,32 @@ namespace D15
                     }
                 }              
             }
-            // FOR PART 1
-            //foreach(Sensor sns in sensors)
-            //{
-            //    int dist = 0; 
-            //    if(sns.yPos > LineCheck)
-            //    {
-            //        dist = sns.yPos - sns.AreaCov - LineCheck;
-            //    }
-            //    else
-            //    {
-            //        dist = -sns.yPos - sns.AreaCov + LineCheck;
-            //    }
-            //    if(dist == 0)
-            //    {
-            //        marks.Add(sns.xPos);
-            //    }
-            //    if(dist <= -1)
-            //    {
-            //        for(int i = sns.xPos + dist; i < sns.xPos - dist; i++)
-            //        {
-            //            marks.Add(i);
-            //        }
-            //    }              
-            //}
-            //Console.WriteLine(marks.Count);
+            //FOR PART 1
+            foreach (Sensor sns in sensors)
+            {
+                int dist = 0;
+                if (sns.yPos > LineCheck)
+                {
+                    dist = sns.yPos - sns.AreaCov - LineCheck;
+                }
+                else
+                {
+                    dist = -sns.yPos - sns.AreaCov + LineCheck;
+                }
+                if (dist == 0)
+                {
+                    marks.Add(sns.xPos);
+                }
+                if (dist <= -1)
+                {
+                    for (int i = sns.xPos + dist; i < sns.xPos - dist; i++)
+                    {
+                        marks.Add(i);
+                    }
+                }
+            }
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(marks.Count);
             // FOR PART 1 ABOVE
             // FROM BELOW FOR PART 2
             bool found = false;
@@ -103,6 +104,7 @@ namespace D15
                     {
                         found = true;
                         ulong rez = 4000000 * (ulong)p[1] + (ulong)p[0];
+                        Console.WriteLine("Part 2 solution:");
                         Console.WriteLine(rez);
                     }
                 }

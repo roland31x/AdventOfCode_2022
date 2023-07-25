@@ -17,6 +17,55 @@ namespace D12
         {
             List<List<Point>> map = new List<List<Point>>();
             using (StreamReader sr = new StreamReader("input.txt"))
+            {
+                int i = 0;
+                while (!sr.EndOfStream)
+                {
+                    map.Add(new List<Point>());
+                    string s = sr.ReadLine();
+                    char[] chars = s.ToCharArray();
+                    for (int j = 0; j < chars.Length; j++)
+                    {
+                        if (chars[j] == 'S')
+                        {
+                            map[i].Add(new Point(chars[j], i, j, 'S'));
+                            continue;
+                        }
+                        if (chars[j] == 'E')
+                        {
+                            map[i].Add(new Point(chars[j], i, j, 'E'));
+                            continue;
+                        }
+                        map[i].Add(new Point(chars[j], i, j));
+                    }
+                    i++;
+                }
+            }
+            int check = Int32.MaxValue;
+
+            Path prob = new Path(map);
+            foreach (List<Point> list in map)
+            {
+                foreach (Point p in list)
+                {
+                    if (p.isStart)
+                    {
+                        prob.SetStart(p.posY, p.posX);
+                        prob.FindWay();
+                        if (prob.GetDist() < check && prob.GetDist() > 0)  // if distance is 0 it means no path was found
+                        {
+                            check = prob.GetDist();
+                        }
+                        prob.Reset();
+                    }
+                }
+            }
+            Console.WriteLine("Part 1 solution:");
+            Console.WriteLine(check);
+
+
+            map = new List<List<Point>>();
+            using (StreamReader sr = new StreamReader("input.txt"))
             {               
                 int i = 0;               
                 while (!sr.EndOfStream)
@@ -26,7 +75,7 @@ namespace D12
                     char[] chars = s.ToCharArray();
                     for(int j = 0; j < chars.Length; j++)
                     {
-                        if (chars[j] == 'S' || chars[j] == 'a')  // remove " || chars[j] == 'a' "  condition for part 1 answer
+                        if (chars[j] == 'S' || chars[j] == 'a') 
                         {
                             map[i].Add(new Point(chars[j], i, j,'S'));
                             continue;
@@ -41,9 +90,9 @@ namespace D12
                     i++;
                 }
             }
-            int check = Int32.MaxValue;
+            check = Int32.MaxValue;
 
-            Path prob = new Path(map);
+            prob = new Path(map);
             foreach(List<Point> list in map)
             {
                 foreach(Point p in list)
@@ -60,6 +109,7 @@ namespace D12
                     }
                 }
             }
+            Console.WriteLine("Part 2 solution:");
             Console.WriteLine(check);
         }
         
